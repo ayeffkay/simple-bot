@@ -1,0 +1,6 @@
+
+[
+    ("Hi!", "Hi, what's up?"),
+    ("I'm fine.", "Nice talking with you. Bye!")
+]
+    

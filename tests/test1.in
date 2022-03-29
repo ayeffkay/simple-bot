@@ -1,0 +1,7 @@
+[
+    ("Hi!", "Hi, what`s your name?"),
+    ("My name is Alina", "Nice to meet you Alina! My name is TestBot. What do you want to talk about?"), 
+    ("I'm fine. And you?", "I'm fine. Tnx!"),
+    ("What do you want to talk about?", ""), 
+    ("Hmmm...", "Nice talking with you. Bye!")
+]

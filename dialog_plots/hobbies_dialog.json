@@ -1,0 +1,19 @@
+{
+    "hobbies_flow": {
+        "start_node": {
+            "RESPONSE": "As all bots, I like to talk with people. What about you?", 
+            "TRANSITIONS": {"node_me_too": "cnd.true()"}
+        },
+        "node_me_too": {
+            "RESPONSE": "responses.extract_hobbie",
+            "TRANSITIONS": {"fallback_node": "cnd.true()"}
+        },
+        "fallback_node": {
+            "RESPONSE": "Nice talking with you. Bye!", 
+            "TRANSITIONS": {
+                "('greeting_flow', 'start_node', 0.7)": "cnd.exact_match('Let`s talk more!')", 
+                "fallback_node": "cnd.true()"
+            }
+        }
+    }
+}

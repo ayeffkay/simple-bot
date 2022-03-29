@@ -1,0 +1,45 @@
+{
+    "greeting_flow": {
+        "start_node": {
+            "RESPONSE": "",
+            "TRANSITIONS": {
+                "node_greeting": "cnd.all([cnd.neg(transitions.has_question), transitions.greeting_condition])", 
+                "node_introduce": "transitions.name_question_condition", 
+                "node_answer_how": "transitions.how_are_you_question_condition"
+            }
+        },
+        "node_greeting": {
+            "RESPONSE": "rsp.choice(['Hi, what`s your name?', 'Hey man how`s it going?'])",
+            "TRANSITIONS": {"node_introduce": "cnd.true()"}
+        },
+        "node_introduce": {
+            "RESPONSE": "responses.choose_greeting_response", 
+            "TRANSITIONS": {
+                "node_answer_how": "cnd.any([transitions.how_are_you_question_condition, cnd.agg([transitions.has_question, transitions.and_you_question_condition], aggregate_function=all)])", 
+                "node_goodbye": "cnd.true()"
+            }
+        },
+        "node_qa": {
+            "RESPONSE": "", 
+            "TRANSITIONS": {
+                "node_introduce": "cnd.all([transitions.has_question, cnd.neg(cnd.has_last_labels(labels=[('greeting_flow', 'node_introduce')]))])", 
+                "node_answer_how": "cnd.all([transitions.has_question, cnd.neg(cnd.has_last_labels(labels=[('greeting_flow', 'node_answer_how')]))])",
+                "node_goodbye": "cnd.true()"
+            }
+        },
+        "node_answer_how": {
+            "RESPONSE": "I'm fine. Tnx!",
+            "TRANSITIONS": {
+                "node_qa": "transitions.has_question",
+                "node_goodbye": "cnd.true()"
+            }
+        },
+        "node_goodbye": {
+            "RESPONSE": "Nice talking with you. Bye!",
+            "TRANSITIONS": {
+                "start_node": "transitions.greeting_condition", 
+                "node_goodbye": "cnd.true()"
+            }
+        }
+    }
+}
