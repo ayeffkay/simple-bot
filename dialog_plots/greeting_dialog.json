@@ -3,6 +3,7 @@
         "start_node": {
             "RESPONSE": "",
             "TRANSITIONS": {
+                "('hobbies_flow', 'start_node')": "cnd.exact_match('Hi! I want to talk about hobbies! what do you like?')", 
                 "node_greeting": "cnd.all([cnd.neg(transitions.has_question), transitions.greeting_condition])", 
                 "node_introduce": "transitions.name_question_condition", 
                 "node_answer_how": "transitions.how_are_you_question_condition"

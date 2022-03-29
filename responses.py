@@ -34,7 +34,7 @@ def choose_greeting_response(ctx: Context, actor: Actor, *args, **kwargs) -> Any
 def extract_hobbie(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
     request = ctx.last_request
 
-    hobbie_pattern = re.compile("I (like)|(enjoy)|(love)|(hate) (?P<hobbie>\w+)", flags=re.IGNORECASE)
+    hobbie_pattern = re.compile("I (like|enjoy|love|hate) (?P<hobbie>[\w ]+)", flags=re.IGNORECASE)
     is_match = hobbie_pattern.match(request)
     
     if is_match:
