@@ -29,8 +29,20 @@ def plots_from_json(root_dir: str) -> dict:
             walk(plot)
             plots.update(plot)
     logger.info("Dialog plots were loaded.")
-    logger.info(plots.keys())
+    flows_lst = list(plots.keys())
+    flows = '; '.join(map(str, flows_lst))
+    logger.info(f"{len(flows_lst)} flows found: {flows}")
     return plots
+
+def import_by_error(e: Exception) -> str:
+    module_name = str(e).split("'")[1]
+    if module_name == 'cnd':
+        import_str = 'import df_engine.conditions as cnd'
+    elif module_name == 'rsp':
+        import_str = 'import df_engine.responses as rsp'
+    else:
+        import_str = f'import {module_name}'
+    return import_str
 
 
 def walk(plot: dict):
@@ -38,25 +50,28 @@ def walk(plot: dict):
         Recursively walk through nested dict to replace strings with commands (if needed)
     """
     for key, value in plot.copy().items():
+
+        import_str = ''
+        if 'lbl' in key:
+            import_str = 'import df_engine.labels as lbl'
+        elif 'node_label_priority' in key:
+            import_str = 'import node_label_priority'
+        if len(import_str):
+            exec(import_str)
+
         try:
             key_ = eval(key)
         except:
             key_ = key
         plot[key_] = plot.pop(key)
+
         if isinstance(value, str):
             while True:
                 try:
                     plot[key_] = eval(value) if re.match('(cnd)|(transitions)|(rsp)|(responses)\.', value) else value
                     break
                 except NameError as e:
-                    module_name = str(e).split("'")[1]
-                    if module_name == 'cnd':
-                        import_str = 'import df_engine.conditions as cnd'
-                    elif module_name == 'rsp':
-                        import_str = 'import df_engine.responses as rsp'
-                    else:
-                        import_str = f'import {module_name}'
-                    exec(import_str)
+                    exec(import_by_error(e))
         elif isinstance(value, dict):
             walk(plot[key_])
 

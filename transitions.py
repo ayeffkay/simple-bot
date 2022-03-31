@@ -45,7 +45,14 @@ def and_you_question_condition(ctx: Context, actor: Actor, *args, **kwargs) -> b
 def bye_condition(ctx: Context, actor: Actor, *args, **kwargs) -> bool:
     last_request = ctx.last_request
     bye_pattern = re.compile("(Bye|Goodbye|Stop).*", flags=re.IGNORECASE)
-    is_match = bye_pattern.match(last_request)
+    is_match = bye_pattern.match(last_request) is not None
+    return is_match
+
+
+def can_understand(ctx: Context, actor: Actor, *args, **kwargs) -> bool:
+    last_request = ctx.last_request
+    understand_pattern = re.compile("(please|could|help)", re.I)
+    is_match = understand_pattern.match(last_request) is not None
     return is_match
 
 

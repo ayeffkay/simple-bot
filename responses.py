@@ -1,7 +1,7 @@
 from os import stat
 import transitions
 from df_engine.core import Actor, Context
-from typing import Any
+from typing import Any, Optional, Callable
 import re
 
 
@@ -31,18 +31,23 @@ def choose_greeting_response(ctx: Context, actor: Actor, *args, **kwargs) -> Any
 
     return "I don't know, what to answer."
 
-def extract_hobbie(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
-    request = ctx.last_request
 
-    hobbie_pattern = re.compile("I (like|enjoy|love|hate) (?P<hobbie>[\w ]+)", flags=re.IGNORECASE)
-    is_match = hobbie_pattern.match(request)
-    
-    if is_match:
-        hobbie = is_match.groupdict()['hobbie']
-        response = f"I'm glad to hear it. I like {hobbie} too."
-    else:
-        response = "Maybe it's interesting, but I don't know. Can you tell more about this?"
-    return response
+def extract_hobbie(response: Optional[str] = None) -> Callable:
+    def internal_func(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
+        request = ctx.last_request
+
+        hobbie_pattern = re.compile("I (like|enjoy|love|hate) (?P<hobbie>[\w ]+)", flags=re.IGNORECASE)
+        is_match = hobbie_pattern.match(request)
+        
+        if is_match:
+            hobbie = is_match.groupdict()['hobbie']
+            response = f"I'm glad to hear it. I like {hobbie} too."
+        else:
+            response = "Maybe it's interesting, but I don't know. Can you tell more about this?"
+        
+        return response
+
+    return internal_func
     
 
     
