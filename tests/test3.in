@@ -1,0 +1,7 @@
+[
+    ("I need help!", "Sure, what's up?"), 
+    ("I have problem with my pet", "Oh, I can understand your problem. I think I can help!"), 
+    ("My pet is ill and I don't know what to do", "Sure, what's up?"),
+    ("I've told you", "Sorry. I didn't get it. Could you explain again?"),
+    ("stop", "Nice talking with you. Bye!")
+]
