@@ -1,0 +1,37 @@
+{
+    "help_flow": {
+        "start_node": {
+            "RESPONSE": "Sure, what's up?", 
+            "TRANSITIONS": {
+                "lbl.forward()": "cnd.regexp('problem .*', flags=re.IGNORECASE)", 
+                "cannot_help_node": "cnd.true()"
+            }
+        },
+        "can_help_node": {
+            "RESPONSE": "Oh, I can understand your problem. I think I can help!", 
+            "TRANSITIONS": {
+                "helped_node": "cnd.regexp('helped me .*', re.I)",
+                "lbl.previous()": "cnd.true()"
+            }
+        }, 
+        "cannot_help_node": {
+            "RESPONSE": "Sorry. I didn't get it. Could you explain again?", 
+            "TRANSITIONS": {
+                "lbl.repeat()": "transitions.can_understand", 
+                "lbl.backward()": "cnd.neg(transitions.can_understand)", 
+                "lbl.forward()": "cnd.regexp('stop', re.I)", 
+                "node_label_priority.priority_node": "cnd.true()"
+            }
+        },
+        "helped_node": {
+            "RESPONSE": "I was happy to help. Do you need more help?",
+            "TRANSITIONS": {
+                "lbl.to_start()": "cnd.regexp('(yes|yep|aye)', re.I)",
+                "lbl.backward()": "cnd.neg(transitions.can_understand)",
+                "node_label_priority.high_priority_node('help_flow', 'can_help_node')": "transitions.can_understand", 
+                "lbl.to_fallback()": "cnd.true()"
+            }
+        }
+
+    }
+}

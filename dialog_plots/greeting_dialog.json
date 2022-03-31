@@ -1,14 +1,24 @@
 {
-    "greeting_flow": {
-        "start_node": {
-            "RESPONSE": "",
+    "GLOBAL": {
+        "TRANSITIONS": {
+            "('hobbies_flow', 'start_node')": "cnd.exact_match('Hi! I want to talk about hobbies! what do you like?')", 
+            "('greeting_flow', 'node_greeting')": "cnd.all([cnd.neg(transitions.has_question), transitions.greeting_condition])", 
+            "('greeting_flow', 'node_introduce')": "transitions.name_question_condition", 
+            "('greeting_flow', 'node_answer_how')": "transitions.how_are_you_question_condition",
+            "node_label_priority.high_priority_node('help_flow', 'start_node')": "cnd.regexp('help.*', flags=re.IGNORECASE)"
+        }
+    },
+    "global_flow": {
+        "start_node": {"RESPONSE": ""}, 
+        "node_goodbye": {
+            "RESPONSE": "Nice talking with you. Bye!",
             "TRANSITIONS": {
-                "('hobbies_flow', 'start_node')": "cnd.exact_match('Hi! I want to talk about hobbies! what do you like?')", 
-                "node_greeting": "cnd.all([cnd.neg(transitions.has_question), transitions.greeting_condition])", 
-                "node_introduce": "transitions.name_question_condition", 
-                "node_answer_how": "transitions.how_are_you_question_condition"
+                "lbl.to_start()": "transitions.greeting_condition",
+                "lbl.repeat()": "cnd.true()"
             }
-        },
+        }
+    },
+    "greeting_flow": {
         "node_greeting": {
             "RESPONSE": "rsp.choice(['Hi, what`s your name?', 'Hey man how`s it going?'])",
             "TRANSITIONS": {"node_introduce": "cnd.true()"}
@@ -17,29 +27,22 @@
             "RESPONSE": "responses.choose_greeting_response", 
             "TRANSITIONS": {
                 "node_answer_how": "cnd.any([transitions.how_are_you_question_condition, cnd.agg([transitions.has_question, transitions.and_you_question_condition], aggregate_function=all)])", 
-                "node_goodbye": "cnd.true()"
+                "('global_flow', 'node_goodbye')": "cnd.true()"
             }
         },
         "node_qa": {
             "RESPONSE": "", 
             "TRANSITIONS": {
-                "node_introduce": "cnd.all([transitions.has_question, cnd.neg(cnd.has_last_labels(labels=[('greeting_flow', 'node_introduce')]))])", 
-                "node_answer_how": "cnd.all([transitions.has_question, cnd.neg(cnd.has_last_labels(labels=[('greeting_flow', 'node_answer_how')]))])",
-                "node_goodbye": "cnd.true()"
+                "lbl.backward(1.0)": "cnd.all([transitions.has_question, cnd.neg(cnd.has_last_labels(labels=[('greeting_flow', 'node_introduce')]))])", 
+                "lbl.forward(2.0)": "cnd.all([transitions.has_question, cnd.neg(cnd.has_last_labels(labels=[('greeting_flow', 'node_answer_how')]))])",
+                "('global_flow', 'node_goodbye')": "cnd.true()"
             }
         },
         "node_answer_how": {
             "RESPONSE": "I'm fine. Tnx!",
             "TRANSITIONS": {
                 "node_qa": "transitions.has_question",
-                "node_goodbye": "cnd.true()"
-            }
-        },
-        "node_goodbye": {
-            "RESPONSE": "Nice talking with you. Bye!",
-            "TRANSITIONS": {
-                "start_node": "transitions.greeting_condition", 
-                "node_goodbye": "cnd.true()"
+                "lbl.to_fallback()": "cnd.true()"
             }
         }
     }
